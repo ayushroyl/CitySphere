@@ -17,7 +17,7 @@ const AuthPage = () => {
     // Page reload logic
     if (!localStorage.getItem('reloaded')) {
       localStorage.setItem('reloaded', 'true');
-      window.location.reload();
+      //window.location.reload();
     }
   }, []);
 
