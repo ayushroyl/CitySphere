@@ -196,11 +196,11 @@ const AuthPage = () => {
                 <button
                     onClick={() => {
                     localStorage.removeItem('reloaded');
-                    //setTimeout(() => {
+                    setTimeout(() => {
                       //window.location.reload();
                       // Scroll to the top after the page refresh
                       //window.scrollTo(0, 0);
-                   // }, 100);
+                    }, 100);
                   //}}
                   className="text-indigo-600 hover:text-indigo-800 font-medium"
                 >
