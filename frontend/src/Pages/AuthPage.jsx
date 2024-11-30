@@ -197,14 +197,14 @@ const AuthPage = () => {
                     onClick={() => {
                     localStorage.removeItem('reloaded');
                     setTimeout(() => {
-                      //window.location.reload();
+                        window.location.reload();
                       // Scroll to the top after the page refresh
                       //window.scrollTo(0, 0);
                     }, 100);
                   //}}
                   className="text-indigo-600 hover:text-indigo-800 font-medium"
                 >
-                  Register Now
+                  //Register Now
                 </button>
               </div>
             </>
