@@ -151,7 +151,7 @@ const AuthPage = () => {
               />
               <button
                 type="button"
-                onClick={handleRegister}
+                //onClick={handleRegister}
                 className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-400 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 Register
