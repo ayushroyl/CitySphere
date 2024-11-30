@@ -99,7 +99,7 @@ const AuthPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-600 to-blue-400">
       <div className="bg-white w-full max-w-md p-6 text-center">
         {/* Conditionally render otpless-login-page */}
-        {!isNewUser && <div id="otpless-login-page" data-type="SIDE_CURTAIN"></div>}
+        {/* {!isNewUser && <div id="otpless-login-page" data-type="SIDE_CURTAIN"></div>} */}
 
         <h2 className="text-3xl font-medium text-gray-800 mt-6">
           <FontAwesomeIcon icon={faLock} />
@@ -199,7 +199,7 @@ const AuthPage = () => {
                     setTimeout(() => {
                       window.location.reload();
                       // Scroll to the top after the page refresh
-                      window.scrollTo(0, 0);
+                      //window.scrollTo(0, 0);
                     }, 100);
                   }}
                   className="text-indigo-600 hover:text-indigo-800 font-medium"
