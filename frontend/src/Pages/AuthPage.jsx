@@ -194,14 +194,14 @@ const AuthPage = () => {
               <div className="mt-4 text-sm text-gray-600">
                 Don't have an account?{' '}
                 <button
-                  {/* onClick={() => {
+                    onClick={() => {
                     localStorage.removeItem('reloaded');
                     setTimeout(() => {
                       window.location.reload();
                       // Scroll to the top after the page refresh
                       window.scrollTo(0, 0);
                     }, 100);
-                  }} */}
+                  }}
                   className="text-indigo-600 hover:text-indigo-800 font-medium"
                 >
                   Register Now
