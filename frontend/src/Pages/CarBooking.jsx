@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { ClipLoader } from "react-spinners"; // Spinner library
 
 const CarBooking = () => {
-  const [loading, setLoading] = useState(true); // State to track loading
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Simulating API confirmation and map initialization
     const loadOlaMaps = async () => {
       try {
-        // Simulate an API call delay
+        // Simulate API call delay
         await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 seconds delay
-        // Here you would initialize Ola Maps API
-        // Example: olaMaps.init({ ... });
-
         setLoading(false); // Set loading to false after initialization
       } catch (error) {
         console.error("Error loading Ola Maps API:", error);
@@ -28,7 +24,8 @@ const CarBooking = () => {
 
       {loading ? (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
-          <ClipLoader size={50} color="#3498db" />
+          {/* Spinner */}
+          <div style={spinnerStyle}></div>
           <p style={{ marginTop: "10px", fontSize: "16px", color: "#555" }}>
             Waiting for API confirmation from Ola Maps...
           </p>
@@ -49,5 +46,29 @@ const CarBooking = () => {
     </div>
   );
 };
+
+// Spinner CSS as an object
+const spinnerStyle = {
+  border: "5px solid #f3f3f3", // Light gray border
+  borderTop: "5px solid #3498db", // Blue border
+  borderRadius: "50%",
+  width: "50px",
+  height: "50px",
+  animation: "spin 1s linear infinite",
+};
+
+// Add animation keyframes in style tag
+const styleTag = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+// Inject the style tag into the document
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styleTag;
+document.head.appendChild(styleSheet);
 
 export default CarBooking;
