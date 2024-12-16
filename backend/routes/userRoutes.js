@@ -45,7 +45,7 @@ router.post('/register/send-otp', async (req, res) => {
         }
 
         // Send OTP using 2Factor API
-        const otpUrl = `https://2factor.in/API/V1/${API_KEY}/SMS/+91${mobile}/AUTOGEN2`;
+        const otpUrl = `https://2factor.in/API/V1/${API_KEY}/SMS/+91${mobile}/AUTOGEN2/`;
         const response = await axios.get(otpUrl);
 
         if (response.data.Status === 'Success') {

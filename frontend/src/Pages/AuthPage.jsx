@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import BASE_URL from '../config/apiConfig';
+import { useSpring, animated } from 'react-spring';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,8 +16,14 @@ const AuthPage = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const navigate = useNavigate();
 
+  const formStyle = useSpring({
+    opacity: 1,
+    transform: 'translateY(0)',
+    from: { opacity: 0, transform: 'translateY(-30px)' },
+    config: { tension: 170, friction: 26 },
+  });
+
   useEffect(() => {
-    // Page reload prevention logic
     if (!localStorage.getItem('reloaded')) {
       localStorage.setItem('reloaded', 'true');
     }
@@ -31,7 +38,6 @@ const AuthPage = () => {
       });
 
       if (response.ok) {
-        alert('OTP sent successfully!');
         setIsOtpSent(true);
       } else {
         setIsNewUser(false);
@@ -50,12 +56,10 @@ const AuthPage = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        alert('OTP verified successfully!');
         setIsVerified(true);
         setIsNewUser(true);
       } else {
-        alert('Invalid OTP. Please try again.');
+        console.log('Invalid OTP. Please try again.');
       }
     } catch (error) {
       console.error('Error during OTP verification:', error);
@@ -105,10 +109,11 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-600 to-blue-400">
-      <div className="bg-white w-full max-w-md p-6 text-center">
-        <h2 className="text-3xl font-medium text-gray-800 mt-6">
-          <FontAwesomeIcon icon={faLock} /> {isLogin && !isNewUser ? ' Login Using Password' : ' Create an Account'}
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-600 to-blue-500 p-4">
+      <animated.div style={formStyle} className="bg-white rounded-xl w-full max-w-md p-8 shadow-2xl">
+        <h2 className="text-3xl font-semibold text-gray-800 text-center mb-6">
+          <FontAwesomeIcon icon={faLock} className="mr-2 text-indigo-600" />
+          {isLogin && !isNewUser ? 'Login' : 'Create an Account'}
         </h2>
 
         <form
@@ -116,7 +121,7 @@ const AuthPage = () => {
             e.preventDefault();
             isNewUser ? handleRegister() : handleLogin();
           }}
-          className="space-y-4"
+          className="space-y-6"
         >
           {isNewUser ? (
             <>
@@ -127,13 +132,13 @@ const AuthPage = () => {
                     placeholder="Enter OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    className="w-full px-4 py-3 font-medium border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400"
+                    className="w-full px-4 py-3 font-medium border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={handleOtpVerification}
-                    className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-400 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                    className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
                   >
                     Verify OTP
                   </button>
@@ -141,20 +146,20 @@ const AuthPage = () => {
               ) : (
                 <>
                   <div className="relative">
-                    <span className="absolute font-medium inset-y-0 left-0 flex items-center pl-3">+91</span>
+                    <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-600">+91</span>
                     <input
                       type="number"
                       placeholder="Mobile Number"
-                      value={mobile.startsWith('91') ? mobile.slice(2) : mobile}
+                      value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
-                      className="w-full pl-14 pr-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-1 focus:ring-gray-400 appearance-none"
+                      className="w-full pl-16 pr-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                       required
                     />
                   </div>
                   <button
                     type="button"
                     onClick={sendOtp}
-                    className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-400 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                    className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
                   >
                     Send OTP
                   </button>
@@ -165,10 +170,10 @@ const AuthPage = () => {
                 <>
                   <input
                     type="text"
-                    placeholder="Name"
+                    placeholder="Full Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 font-medium border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                     required
                   />
                   <input
@@ -176,12 +181,12 @@ const AuthPage = () => {
                     placeholder="Set Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 font-medium border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                     required
                   />
                   <button
                     type="submit"
-                    className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-400 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                    className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
                   >
                     Register
                   </button>
@@ -191,13 +196,13 @@ const AuthPage = () => {
           ) : (
             <>
               <div className="relative">
-                <span className="absolute font-medium inset-y-0 left-0 flex items-center pl-3">+91</span>
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-600">+91</span>
                 <input
                   type="number"
                   placeholder="Mobile Number"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
-                  className="w-full pl-14 pr-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-1 focus:ring-gray-400 appearance-none"
+                  className="w-full pl-16 pr-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                   required
                 />
               </div>
@@ -206,12 +211,12 @@ const AuthPage = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 font-medium border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400"
+                className="w-full px-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                 required
               />
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-400 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
               >
                 Login
               </button>
@@ -220,8 +225,8 @@ const AuthPage = () => {
         </form>
 
         {!isNewUser && (
-          <div className="mt-4 text-sm text-gray-600">
-            Don’t have an account?{' '}
+          <div className="mt-4 text-sm text-gray-600 text-center">
+            Don't have an account?{' '}
             <button
               onClick={() => setIsNewUser(true)}
               className="text-indigo-600 hover:text-indigo-800 font-medium"
@@ -230,7 +235,7 @@ const AuthPage = () => {
             </button>
           </div>
         )}
-      </div>
+      </animated.div>
     </div>
   );
 };

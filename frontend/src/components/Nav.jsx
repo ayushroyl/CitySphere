@@ -86,13 +86,6 @@ const Nav = () => {
             >
               My Profile
             </Link>
-            <Link
-              to="/accesslogin"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-800"
-              onClick={() => setIsOpen(false)} // Close menu on click
-            >
-              Admin Login
-            </Link>
           </div>
         </div>
       )}

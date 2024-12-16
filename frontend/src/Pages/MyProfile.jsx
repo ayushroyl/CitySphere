@@ -197,7 +197,7 @@ const MyProfile = () => {
             {userData.name || "Your Name"}
           </h2>
           <h2 className="text-sm font-medium text-stone-700">
-            +{userData.mobile || "Mobile"}
+            +91{userData.mobile || "Mobile"}
           </h2>
         </div>
 
