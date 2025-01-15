@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./Pages/AuthPage";
 import Nav from "./components/Nav";
@@ -18,12 +18,12 @@ import PrivacyPolicy from "./Pages/PrivacyPolicy";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       {/* Ensure layout spans full height */}
       <div className="flex flex-col min-h-screen">
         <MainRoutes />
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
 
