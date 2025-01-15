@@ -11,7 +11,7 @@ import MyProfile from "./Pages/MyProfile";
 import CarBooking from './Pages/CarBooking';
 import FinalCarBook from './Pages/FinalCarBook';
 import FlatBooking from './Pages/FlatBooking';
-import ForgetPass from "./Pages/forgotpass";
+import ForgetPass from "./Pages/Forgotpass";
 import NotFound from "./Pages/NotFound";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 
