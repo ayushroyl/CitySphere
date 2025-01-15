@@ -8,7 +8,10 @@ const path = require('path'); // Required for file path handling
 const userRoutes = require('./routes/userRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const authMiddleware = require('./middleware/authMiddleware');
+const carRoutes = require('./routes/carRoutes');
+const flatRoutes = require('./routes/flatRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const adminMiddleware = require('./middleware/authMiddleware');
 
 const app = express();
 
@@ -27,6 +30,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/cars',carRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/flat', flatRoutes);
 
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {

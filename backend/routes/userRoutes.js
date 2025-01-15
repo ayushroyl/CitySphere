@@ -2,78 +2,37 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
 const User = require('../models/User');
 const router = express.Router();
-const authMiddleware = require('../middleware/authMiddleware');
-const upload = require('../middleware/upload');
+const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');  // Import middlewares
+const { uploadProfile } = require('../middleware/upload');
 
-const API_KEY = process.env.TWO_FACTOR_API_KEY; // 2Factor API Key
 const JWT_SECRET = process.env.JWT_SECRET; // JWT Secret for token generation
 
-
-// Upload Profile Picture
-router.post('/profile/picture', authMiddleware, upload.single('profilePicture'), async (req, res) => {
+//upload profile picture
+router.post('/profile/picture', authMiddleware, (req, res, next) => {
+    uploadProfile(req, res, (err) => {
+        if (err) {
+            return res.status(400).json({ error: err.message });
+        }
+        next();
+    });
+}, async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        const profilePictureUrl = `/uploads/${req.file.filename}`;
-        const updatedUser = await User.findByIdAndUpdate(req.userId, { profilePic: profilePictureUrl });
+        const profilePictureUrl = `/uploads/profile/${req.file.filename}`;
+        const updatedUser = await User.findByIdAndUpdate(req.userId, { profilePic: profilePictureUrl }, { new: true });
 
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.json({ profilePic: profilePictureUrl });
+        res.json({ message: 'Profile picture uploaded successfully', profilePic: profilePictureUrl });
     } catch (error) {
         res.status(500).json({ message: 'Error uploading profile picture', error });
-    }
-});
-
-
-// User Registration (Send OTP)
-router.post('/register/send-otp', async (req, res) => {
-    try {
-        const { mobile } = req.body;
-
-        // Check if user already exists
-        const existingUser = await User.findOne({ mobile });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        // Send OTP using 2Factor API
-        const otpUrl = `https://2factor.in/API/V1/${API_KEY}/SMS/+91${mobile}/AUTOGEN2/`;
-        const response = await axios.get(otpUrl);
-
-        if (response.data.Status === 'Success') {
-            res.status(200).json({ message: 'OTP sent successfully'});
-        } else {
-            res.status(400).json({ message: 'Failed to send OTP', error: response.data });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'Error sending OTP', error: error.message });
-    }
-});
-
-// Verify OTP and Complete Registration
-router.post('/register/verify-otp', async (req, res) => {
-    try {
-        const { mobile, otp } = req.body;
-
-        // Verify OTP using 2Factor API
-        const verifyUrl = `https://2factor.in/API/V1/${API_KEY}/SMS/VERIFY3/${mobile}/${otp}`;
-        const response = await axios.get(verifyUrl);
-
-        if (response.data.Status !== 'Success') {
-            return res.status(400).json({ message: 'Invalid or expired OTP', error: response.data });
-        }
-
-        res.status(201).json({ message: 'OTP verification successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error verifying OTP', error: error.message });
     }
 });
 
@@ -81,6 +40,10 @@ router.post('/register/verify-otp', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         const { name, mobile, password } = req.body;
+        const user = await User.findOne({ mobile });
+        if (user) {
+            return res.status(400).json({ message: 'User Already exist' });
+        }
 
         // Hash the password before saving to the database
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -96,55 +59,6 @@ router.post('/register', async (req, res) => {
         res.status(201).json({ message: 'User registered successfully', token, userId: newUser._id });
     } catch (error) {
         res.status(500).json({ message: 'Error registering user', error: error.message });
-    }
-});
-
-
-// Forgot Password (Send OTP)
-router.post('/forgot-password/send-otp', async (req, res) => {
-    try {
-        const { mobile } = req.body;
-
-        // Check if user exists
-        const user = await User.findOne({ mobile });
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
-        }
-
-        // Send OTP using 2Factor API
-        const otpUrl = `https://2factor.in/API/V1/${API_KEY}/SMS/+91${mobile}/AUTOGEN2`;
-        const response = await axios.get(otpUrl);
-
-        if (response.data.Status === 'Success') {
-            res.status(200).json({ message: 'OTP sent successfully', sessionId: response.data.Details });
-        } else {
-            res.status(400).json({ message: 'Failed to send OTP', error: response.data });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'Error sending OTP', error: error.message });
-    }
-});
-
-// Verify OTP and Reset Password
-router.post('/forgot-password/verify-otp', async (req, res) => {
-    try {
-        const { mobile, sessionId, otp, newPassword } = req.body;
-
-        // Verify OTP using 2Factor API
-        const verifyUrl = `https://2factor.in/API/V1/${API_KEY}/SMS/VERIFY3/${sessionId}/${otp}`;
-        const response = await axios.get(verifyUrl);
-
-        if (response.data.Status !== 'Success') {
-            return res.status(400).json({ message: 'Invalid or expired OTP', error: response.data });
-        }
-
-        // Hash new password and update user
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        await User.findOneAndUpdate({ mobile }, { password: hashedPassword });
-
-        res.status(200).json({ message: 'Password updated successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error verifying OTP', error: error.message });
     }
 });
 
@@ -170,43 +84,52 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Get all users (Admin functionality)
-router.get('/', authMiddleware, async (req, res) => {
-    try {
-      const users = await User.find();
-      res.status(200).json(users);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
+// Check User Existence
+router.post("/check", async (req, res) => {
+    const { mobile } = req.body;
 
-// Get Specific User Profile
-router.get('/profile', authMiddleware, async (req, res) => {
-    try {
-      const user = await User.findById(req.userId).select('-password');
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.json(user);
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching user data', error });
+    if (!mobile) {
+        return res.status(400).json({ error: "Mobile number is required." });
     }
-  }); 
 
-// Delete User
-router.delete('/delete', authMiddleware, async (req, res) => {
     try {
-      const user = await User.findByIdAndDelete(req.userId); // Use req.userId from auth middleware
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.status(200).json({ message: 'User deleted successfully' });
+        const user = await User.findOne({ mobile });
+        if (user) {
+            return res.json({ exists: true });
+        } else {
+            return res.json({ exists: false });
+        }
     } catch (error) {
-      res.status(500).json({ message: 'Error deleting user', error });
+        console.error("Error checking user:", error);
+        return res.status(500).json({ error: "Internal server error." });
     }
-  });
-  
+});
+
+// Update Password without old password
+router.post("/update-password", async (req, res) => {
+    const { mobile, password } = req.body;
+
+    if (!mobile || !password) {
+        return res.status(400).json({ error: "Mobile number and password are required." });
+    }
+
+    try {
+        const user = await User.findOne({ mobile });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.json({ success: true, message: "Password updated successfully." });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        return res.status(500).json({ error: "Internal server error." });
+    }
+});
 
 // Update User Profile
 router.put('/profile', authMiddleware, async (req, res) => {
@@ -217,7 +140,7 @@ router.put('/profile', authMiddleware, async (req, res) => {
             { name, email, address },
             { new: true }
         ).select('-password');
-        
+
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -258,5 +181,45 @@ router.put('/profile/password', authMiddleware, async (req, res) => {
     }
 });
 
+// Get all users (Admin functionality)
+router.get('/', adminMiddleware, async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get Specific User Profile (Admin functionality)
+router.get('/profile', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user data', error });
+    }
+});
+
+// Delete User (Admin functionality)
+router.delete('/delete/:userId', adminMiddleware, async (req, res) => {  // Use userId in URL params
+    const { userId } = req.params; // Get userId from request params
+
+    try {
+        const user = await User.findByIdAndDelete(userId);  // Find and delete by userId from URL params
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting user', error });
+    }
+});
 
 module.exports = router;

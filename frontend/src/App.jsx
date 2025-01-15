@@ -9,36 +9,47 @@ import Services from "./Pages/Services";
 import MyOrder from "./Pages/MyOrder";
 import MyProfile from "./Pages/MyProfile";
 import CarBooking from './Pages/CarBooking';
+import FinalCarBook from './Pages/FinalCarBook';
 import FlatBooking from './Pages/FlatBooking';
-import AdminPanel from "./Pages/AdminPanel";
-import AccessLogin from "./Pages/accesslogin";
+import ForgetPass from "./Pages/forgotpass";
+import NotFound from "./Pages/NotFound";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
+
 
 function App() {
   return (
     <BrowserRouter>
-      <MainRoutes />
+      {/* Ensure layout spans full height */}
+      <div className="flex flex-col min-h-screen">
+        <MainRoutes />
+      </div>
     </BrowserRouter>
   );
 }
 
 function MainRoutes() {
   const location = useLocation();
-  const hideNavAndFooter = location.pathname === "/authpage" || location.pathname.startsWith("/adminpanel");
+  const hideNavAndFooter = location.pathname === "/authpage" || location.pathname.startsWith("/forget-password") || location.pathname.startsWith("/privacy-policy");
 
   return (
     <>
       {!hideNavAndFooter && <Nav />}
-      <Routes>
-        <Route path="/authpage" element={<AuthPage />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/myorder" element={<MyOrder />} />
-        <Route path="/myprofile" element={<MyProfile />} />
-        <Route path="/car-booking" element={<CarBooking />} />
-        <Route path="/flat-booking" element={<FlatBooking />} />
-        <Route path="/accesslogin" element={<AccessLogin />} />
-        <Route path="/adminpanel" element={<AdminPanel />} />
-      </Routes>
+      <main className="flex-grow">
+        {/* Main content goes here */}
+        <Routes>
+          <Route path="/authpage" element={<AuthPage />} />
+          <Route path="/forget-password" element={<ForgetPass />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/myorder" element={<MyOrder />} />
+          <Route path="/myprofile" element={<MyProfile />} />
+          <Route path="/car-booking" element={<CarBooking />} />
+          <Route path="/finalcarbook" element={<FinalCarBook />} />
+          <Route path="/flat-booking" element={<FlatBooking />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
       {!hideNavAndFooter && <Footer />}
     </>
   );

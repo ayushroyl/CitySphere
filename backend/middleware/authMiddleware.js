@@ -12,10 +12,25 @@ const authMiddleware = (req, res, next) => {
     req.userId = decoded.id; // Attach user ID to the request
     next(); // Proceed to the next middleware or route
   } catch (error) {
-    return res.status(403).json({ message: 'Invalid token' });
+    return res.status(403).json({ message: 'Invalid user token' });
   }
 };
 
+// Middleware for admins
+const adminMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Authorization token missing' });
+  }
 
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_ADMIN);
+    req.adminId = decoded.id;
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Invalid or expired admin token' });
+  }
+};
 
-module.exports = authMiddleware;
+module.exports = { authMiddleware, adminMiddleware };

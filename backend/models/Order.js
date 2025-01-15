@@ -1,96 +1,102 @@
 const mongoose = require('mongoose');
 
-const orderSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assumes a `User` model exists
-    required: true,
-  },
-  // serviceId is for service orders
-  serviceId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Service', // Assumes a `Service` model exists
-    required: false, // Optional, only for service orders
-  },
-  // flatType and associated fields for flat bookings
-  flatType: {
-    type: String,
-    required: false, // Optional, only for flat bookings
-  },
-  moveInDate: {
-    type: Date,
-    required: false, // Optional, only for flat bookings
-  },
-  budget: {
-    min: {
-      type: Number,
-      required: false, // Optional, only for flat bookings
+const orderSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
-    max: {
-      type: Number,
-      required: false, // Optional, only for flat bookings
+    serviceId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Service',
+      required: false, // Required only for service bookings
+    },
+    flatId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Flat',
+      required: false, // Required only for flat bookings
+    },
+    pickup: {
+      type: String,
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    dropoff: {
+      type: String,
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    journeyType: {
+      type: String, // e.g., "One-way", "Round-trip"
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    carType: {
+      type: String, // e.g., "Sedan", "SUV"
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    distance: {
+      type: Number, // In kilometers
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    duration: {
+      type: String, // e.g., "2 hours"
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    fare: {
+      type: Number, // Total fare amount
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    date: {
+      type: Date,
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    time: {
+      type: String, // Pickup time
+      required: function () {
+        return this.type === 'car';
+      },
+    },
+    address: {
+      type: String,
+      required: function () {
+        return this.type === 'service';
+      },
+    },
+    status: {
+      type: String,
+      enum: ['Pending', 'Accepted', 'Completed', 'Cancelled'],
+      default: 'Pending',
+    },
+    type: {
+      type: String,
+      enum: ['service', 'flat', 'car'],
+      required: true,
     },
   },
-  // Fields for car booking
-  pickup: {
-    type: String,
-    required: false, // Optional, only for car bookings
-  },
-  dropoff: {
-    type: String,
-    required: false, // Optional, only for car bookings
-  },
-  pickupDate: {
-    type: Date,
-    required: false, // Optional, only for car bookings
-  },
-  pickupTime: {
-    type: String, // Time in HH:mm format or ISO 8601 string
-    required: false, // Optional, only for car bookings
-  },
-  carType: {
-    type: String, // e.g., "SUV", "Sedan"
-    required: false, // Optional, only for car bookings
-  },
-  distance: {
-    type: Number, // Distance in kilometers
-    required: false, // Optional, only for car bookings
-  },
-  price: {
-    type: Number, // Total price for the booking
-    required: false, // Optional, only for car bookings
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ['Pending', 'Confirmed', 'Completed', 'Cancelled'],
-    default: 'Pending',
-  },
-  type: {
-    type: String,
-    enum: ['service', 'flat', 'car'], // Added 'car' for car bookings
-    required: true, // Either 'service', 'flat', or 'car'
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    timestamps: true, // Adds createdAt and updatedAt timestamps
+  }
+);
 
 // Validation middleware
 orderSchema.pre('save', function (next) {
-  if (this.type === 'flat') {
-    // Ensure flatType, moveInDate, and budget are provided for flat orders
-    if (!this.flatType || !this.moveInDate || !this.budget) {
-      return next(new Error('Missing required fields for flat booking'));
-    }
+  if (this.type === 'flat' && !this.flatId) {
+    return next(new Error('Missing flatId for flat order'));
   }
 
   if (this.type === 'service' && !this.serviceId) {
@@ -102,11 +108,11 @@ orderSchema.pre('save', function (next) {
     if (
       !this.pickup ||
       !this.dropoff ||
-      !this.pickupDate ||
-      !this.pickupTime ||
+      !this.date ||
+      !this.time ||
       !this.carType ||
       this.distance === undefined ||
-      this.price === undefined
+      this.fare === undefined
     ) {
       return next(new Error('Missing required fields for car booking'));
     }

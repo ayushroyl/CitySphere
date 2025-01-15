@@ -45,6 +45,8 @@ const Home = () => {
       const user = userResponse.data;
 
       if (!user.address) {
+        setName(user.name);
+        setMobile(user.mobile);
         setSelectedServiceId(serviceId);
         setShowAddressModal(true);
       } else {
@@ -82,12 +84,12 @@ const Home = () => {
             setIsSuccess(false); // Hide success animation after 3 seconds
             setShowAddressModal(false);
             setSelectedServiceId(null);
+            navigate("/myorder");
           }, 1500);
       }
     } catch (error) {
       setIsProcessing(false);
       console.error("Error confirming booking:", error);
-      alert("Failed to place order. Please try again.");
     }
   };
 

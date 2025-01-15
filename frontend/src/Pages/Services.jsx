@@ -47,6 +47,8 @@ const Services = () => {
       const user = userResponse.data;
 
       if (!user.address) {
+        setName(user.name);
+        setMobile(user.mobile);
         setSelectedServiceId(serviceId);
         setShowAddressModal(true);
       } else {
@@ -65,6 +67,7 @@ const Services = () => {
     try {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userData").split('"')[1];
+      setIsProcessing(true);
       const response = await axios.post(
         `${BASE_URL}/api/orders/add`,
         {
@@ -85,13 +88,14 @@ const Services = () => {
             setIsSuccess(false); // Hide success animation after 3 seconds
             setShowAddressModal(false);
             setSelectedServiceId(null);
+            navigate("/myorder")
           }, 1500);
-        }, 0); // Simulate processing delay
+        }, 1000); // Simulate processing delay
       }
     } catch (error) {
       setIsProcessing(false);
       console.error("Error confirming booking:", error);
-      alert("Failed to place order. Please try again.");
+      console.log("Failed to place order. Please try again.");
     }
   };
 

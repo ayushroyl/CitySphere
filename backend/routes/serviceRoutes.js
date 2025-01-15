@@ -1,5 +1,6 @@
 const express = require('express');
 const Service = require('../models/Service'); // Assuming you have a Service model set up
+const { adminMiddleware } = require('../middleware/authMiddleware');  // Import middlewares
 const router = express.Router();
 
 // GET - Fetch all services
@@ -13,8 +14,8 @@ router.get('/', async (req, res) => {
 });
 
 // POST - Add a new service
-router.post('/add', async (req, res) => {
-  const { serviceName, description, price, icon } = req.body;
+router.post('/add', adminMiddleware, async (req, res) => {
+  const { serviceName, description, price } = req.body;
 
   try {
     const newService = new Service({
@@ -31,7 +32,7 @@ router.post('/add', async (req, res) => {
 });
 
 // PUT - Update an existing service
-router.put('/update/:id', async (req, res) => {
+router.put('/update/:id', adminMiddleware, async (req, res) => {
   const serviceId = req.params.id;
   const { serviceName, description, price } = req.body;
 
@@ -53,7 +54,7 @@ router.put('/update/:id', async (req, res) => {
 });
 
 // DELETE - Delete a service
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', adminMiddleware, async (req, res) => {
   const serviceId = req.params.id;
 
   try {

@@ -58,6 +58,10 @@ const Footer = () => {
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200">
               <FontAwesomeIcon icon={faInstagram} />
             </a>
+            <a href="/privacy-policy" className="text-blue-500 hover:underline">
+              Privacy Policy
+            </a>
+
           </div>
         </div>
       </div>

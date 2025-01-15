@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
-import BASE_URL from '../config/apiConfig';
 import { useSpring, animated } from 'react-spring';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BASE_URL from '../config/apiConfig';
+import logo from '../assets/logo-long.png';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [isNewUser, setIsNewUser] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [name, setName] = useState('');
-  const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [otp, setOtp] = useState('');
-  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otpSection, setOtpSection] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const formStyle = useSpring({
@@ -23,55 +25,75 @@ const AuthPage = () => {
     config: { tension: 170, friction: 26 },
   });
 
-  useEffect(() => {
-    if (!localStorage.getItem('reloaded')) {
-      localStorage.setItem('reloaded', 'true');
+  const initiateOTPless = async () => {
+    const OTPless = window.OTPlessSignin;
+    if (!OTPless) {
+      toast.error('Network error. Please try again.');
+      return;
     }
-  }, []);
 
-  const sendOtp = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/users/register/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile }),
-      });
+      setIsSending(true);
+      const request = {
+        channel: 'PHONE',
+        phone: phoneNumber,
+        countryCode: '+91',
+        deliveryChannel: 'SMS',
+        otpLength: 4,
+        expiry: '120',
+      };
 
-      if (response.ok) {
-        setIsOtpSent(true);
-      } else {
-        setIsNewUser(false);
-      }
+      const result = await OTPless.initiate(request);
+      toast.success('OTP sent successfully!');
+      setOtpSection(true);
     } catch (error) {
-      console.error('Error sending OTP:', error);
+      toast.error('Error sending OTP. Please try again.');
+    } finally {
+      setIsSending(false);
     }
   };
 
-  const handleOtpVerification = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/users/register/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile, otp }),
-      });
+  const verifyOTPless = async () => {
+    const OTPless = window.OTPlessSignin;
+    if (!OTPless) {
+      toast.error('Network error. Please try again.');
+      return;
+    }
 
-      if (response.ok) {
-        setIsVerified(true);
-        setIsNewUser(true);
+    try {
+      setIsVerifying(true);
+      const request = {
+        channel: 'PHONE',
+        phone: phoneNumber,
+        otp,
+        countryCode: '+91',
+      };
+
+      const result = await OTPless.verify(request);
+      //console.log('Verify Result:', result.success);
+
+      if (result.success == true) {
+        if (!isLogin) {
+          await registerUser();
+        } else {
+          toast.error('Please try again.');
+        }
       } else {
-        console.log('Invalid OTP. Please try again.');
+        toast.error('Incorrect OTP');
       }
     } catch (error) {
-      console.error('Error during OTP verification:', error);
+      toast.error('Please try again after some time.');
+    } finally {
+      setIsVerifying(false);
     }
   };
 
-  const handleRegister = async () => {
+  const registerUser = async () => {
     try {
       const response = await fetch(`${BASE_URL}/api/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isVerified, name, mobile, password }),
+        body: JSON.stringify({ name, mobile: phoneNumber, password }),
       });
 
       if (response.ok) {
@@ -80,10 +102,17 @@ const AuthPage = () => {
         localStorage.setItem('token', data.token);
         navigate('/myprofile');
       } else {
-        alert('Server Error. Registration failed.');
+        const errorData = await response.json();
+        if (errorData.message === 'User Already exist') {
+          toast.error('User already exist, You can login now');
+          setIsLogin(true);
+          resetFields();
+        } else {
+          toast.error('Registration failed. Please try again.');
+        }
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      toast.error('Registration error:', error);
     }
   };
 
@@ -92,7 +121,7 @@ const AuthPage = () => {
       const response = await fetch(`${BASE_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile, password }),
+        body: JSON.stringify({ mobile: phoneNumber, password }),
       });
 
       if (response.ok) {
@@ -101,142 +130,143 @@ const AuthPage = () => {
         localStorage.setItem('token', data.token);
         navigate('/myprofile');
       } else {
-        alert('Wrong Mobile or Password');
+        const errorData = await response.json();
+        if (errorData.message === 'Invalid credentials or mobile not verified') {
+          toast.error('Mobile number not found. Please register first.');
+          setIsLogin(false);
+          resetFields();
+        } else {
+          toast.error('Wrong Mobile or Password');
+        }
       }
     } catch (error) {
-      console.error('Login error:', error);
+      toast.error('Login error:', error);
     }
   };
 
+  const resetFields = () => {
+    setName('');
+    setPassword('');
+    setPhoneNumber('');
+    setOtp('');
+    setOtpSection(false);
+    setErrorMessage('');
+  };
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://otpless.com/v4/headless.js';
+    script.id = 'otpless-sdk';
+    script.setAttribute('data-appid', 'QYPIGX6IFB9UNZA1C5QA');
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      const OTPless = window.OTPless;
+      if (OTPless) {
+        window.OTPlessSignin = new OTPless((response) => {
+          console.log('OTPLess Callback:', response);
+        });
+      }
+    };
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-600 to-blue-500 p-4">
-      <animated.div style={formStyle} className="bg-white rounded-xl w-full max-w-md p-8 shadow-2xl">
-        <h2 className="text-3xl font-semibold text-gray-800 text-center mb-6">
-          <FontAwesomeIcon icon={faLock} className="mr-2 text-indigo-600" />
-          {isLogin && !isNewUser ? 'Login' : 'Create an Account'}
-        </h2>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            isNewUser ? handleRegister() : handleLogin();
-          }}
-          className="space-y-6"
-        >
-          {isNewUser ? (
-            <>
-              {isOtpSent ? (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Enter OTP"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    className="w-full px-4 py-3 font-medium border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={handleOtpVerification}
-                    className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
-                  >
-                    Verify OTP
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-600">+91</span>
-                    <input
-                      type="number"
-                      placeholder="Mobile Number"
-                      value={mobile}
-                      onChange={(e) => setMobile(e.target.value)}
-                      className="w-full pl-16 pr-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={sendOtp}
-                    className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
-                  >
-                    Send OTP
-                  </button>
-                </>
-              )}
-
-              {isVerified && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    required
-                  />
-                  <input
-                    type="password"
-                    placeholder="Set Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
-                  >
-                    Register
-                  </button>
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-600">+91</span>
-                <input
-                  type="number"
-                  placeholder="Mobile Number"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  className="w-full pl-16 pr-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  required
-                />
-              </div>
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                required
-              />
-              <button
-                type="submit"
-                className="w-full py-3 mt-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
-              >
-                Login
-              </button>
-            </>
-          )}
-        </form>
-
-        {!isNewUser && (
-          <div className="mt-4 text-sm text-gray-600 text-center">
-            Don't have an account?{' '}
-            <button
-              onClick={() => setIsNewUser(true)}
-              className="text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              Register Now
-            </button>
-          </div>
+    <animated.div
+      style={formStyle}
+      className="flex flex-col font-bold justify-center items-center min-h-screen bg-gradient-to-r from-indigo-600 to-blue-500"
+    >
+      <ToastContainer />
+      <div className="bg-white shadow-xl rounded-xl p-8 w-11/12 sm:w-96">
+        <div className="flex justify-center mb-4">
+          <img className="h-24" src={logo} alt="CitySphere" />
+        </div>
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          {isLogin ? "Welcome Back!" : "Create an Account"}
+        </h1>
+        {errorMessage && (
+          <p className="text-sm text-red-500 text-center mb-4">
+            {errorMessage}
+          </p>
         )}
-      </animated.div>
-    </div>
+        {!isLogin && (
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter Your Name"
+            className="block w-full p-3 text-sm border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        )}
+        <input
+          type="number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="Enter Mobile Number"
+          className="block w-full p-3 text-sm border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder={isLogin ? "Enter Password" : "Create Password"}
+          className="block w-full p-3 text-sm border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {otpSection && (
+          <input
+            type="text"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            placeholder="Enter OTP"
+            className="block w-full p-3 text-sm border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        )}
+        {isLogin ? (
+          <div
+            className="text-sky-500 text-right cursor-pointer"
+            onClick={() => navigate('/forget-password')}
+          >
+            Forget Password?
+          </div>
+        ) : null}
+        <button
+          onClick={
+            otpSection
+              ? verifyOTPless
+              : isLogin
+                ? handleLogin
+                : initiateOTPless
+          }
+          disabled={isSending || isVerifying}
+          className={`w-full p-3 text-white font-bold rounded-md mt-2 ${isSending || isVerifying
+            ? "bg-gray-400"
+            : "bg-blue-500 hover:bg-blue-600"
+            }`}
+        >
+          {otpSection
+            ? isVerifying
+              ? "Verifying..."
+              : "Verify OTP"
+            : isLogin
+              ? "Login"
+              : isSending
+                ? "Sending OTP..."
+                : "Send OTP"}
+        </button>
+        <button
+          onClick={() => {
+            setIsLogin(!isLogin);
+            resetFields();
+          }}
+          className="w-full p-3 text-gray-700 font-semibold rounded-md mt-4 border border-gray-300 bg-gray-100 hover:bg-gray-200"
+        >
+          {isLogin ? "Switch to Register" : "Switch to Login"}
+        </button>
+      </div>
+    </animated.div>
   );
 };
 

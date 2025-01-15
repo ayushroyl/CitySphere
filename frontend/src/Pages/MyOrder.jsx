@@ -65,7 +65,7 @@ const MyOrder = () => {
     switch (status) {
       case "Pending":
         return "text-yellow-600 bg-yellow-100";
-      case "Confirmed":
+      case "Accepted":
         return "text-blue-600 bg-blue-100";
       case "Completed":
         return "text-green-600 bg-green-100";
@@ -80,7 +80,7 @@ const MyOrder = () => {
     switch (status) {
       case "Pending":
         return faClock;
-      case "Confirmed":
+      case "Accepted":
         return faCheckCircle;
       case "Completed":
         return faCheckCircle;
@@ -114,38 +114,68 @@ const MyOrder = () => {
             >
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold text-gray-900">
-                  {order.type === "flat" ? order.flatType : order.serviceId.serviceName}
+                  {order.type === "flat"
+                    ? order.flatId?.flatName || "Unavailable"
+                    : order.type === "service"
+                      ? order.serviceId?.serviceName || "Unavailable"
+                      : `Car Booking (${order?.carType || "Unavailable"})`}
                 </h3>
                 <span className="text-sm text-gray-500">
                   {new Date(order.createdAt).toLocaleString()}
                 </span>
               </div>
               <div className="mt-4 space-y-2 font-normal text-gray-800">
-                <p className="font-medium">Your Details:</p>
+                <p className="font-medium">Order Details:</p>
                 <p>
-                  <span className="font-medium">Order Id:</span> {order._id}
+                  <span className="font-medium">Order Id:</span> {order._id.slice(-7).toUpperCase()}
                 </p>
-                <p>
-                  <span className="font-medium">Address:</span> {order.address}
-                </p>
+                {order.type === "car" && (
+                  <>
+                    <p>
+                      <span className="font-medium">Pickup:</span> {order.pickup}
+                    </p>
+                    <p>
+                      <span className="font-medium">Dropoff:</span> {order.dropoff}
+                    </p>
+                    <p>
+                      <span className="font-medium">Journey Type:</span> {order.journeyType}
+                    </p>
+                    <p>
+                      <span className="font-medium">Distance:</span> {order.distance} km
+                    </p>
+                    <p>
+                      <span className="font-medium">Duration:</span> {order.duration}
+                    </p>
+                    <p>
+                      <span className="font-medium">Fare:</span> ₹{order.fare}
+                    </p>
+                    <p>
+                      <span className="font-medium">Date:</span> {new Date(order.date).toDateString()}
+                    </p>
+                    <p>
+                      <span className="font-medium">Time:</span> {order.time}
+                    </p>
+                  </>
+                )}
                 {order.type === "flat" && (
                   <>
                     <p>
-                      <span className="font-medium">Flat Type:</span> {order.flatType}
+                      <span className="font-medium">Flat Location & Details:</span> {order?.flatId?.description || "Unavailable"}
                     </p>
                     <p>
-                      <span className="font-medium">Budget:</span> ₹{order.budget.min} - ₹{order.budget.max}
-                    </p>
-                    <p>
-                      <span className="font-medium">Move-in Date:</span>{" "}
-                      {new Date(order.moveInDate).toLocaleDateString()}
+                      <span className="font-medium">Rent:</span> {order?.flatId?.price || "Unavailable"} per month
                     </p>
                   </>
+                )}
+                {order.type === "service" && (
+                  <p>
+                    <span className="font-medium">Service Address:</span> {order?.address || "Unavailable"}
+                  </p>
                 )}
               </div>
               <div
                 className={`flex items-center mt-4 rounded-full px-3 py-2 ${getStatusClass(
-                  order.status
+                  order?.status || "Unavailable"
                 )}`}
               >
                 <FontAwesomeIcon icon={getStatusIcon(order.status)} className="mr-2" />
@@ -163,6 +193,7 @@ const MyOrder = () => {
             </div>
           ))}
         </div>
+
       )}
 
       {/* Confirmation Modal */}
@@ -170,11 +201,13 @@ const MyOrder = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Cancel Order</h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-black font-medium mb-6">
               Are you sure you want to cancel the{" "}
               {selectedOrder.type === "flat"
                 ? `flat booking for ${selectedOrder.flatType}`
-                : `service ${selectedOrder.serviceId.serviceName}`}?
+                : selectedOrder.type == "service"
+                  ? `service ${selectedOrder.serviceId?.serviceName || "Unavailable"}`
+                  :`this trip`} ?
             </p>
             <div className="flex justify-end space-x-4">
               <button

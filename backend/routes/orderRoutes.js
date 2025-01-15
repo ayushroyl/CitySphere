@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
-const authMiddleware = require('../middleware/authMiddleware');
-
+const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');  // Import middlewares
 
 router.post('/add', authMiddleware, async (req, res) => {
   try {
-    const { serviceId, flatType, carType, pickupLocation, dropoffLocation, pickupDate, pickupTime, distance, price, userId, address, moveInDate, budget } = req.body;
+    const {  userId, serviceId, flatId, carType, pickup, dropoff, journeyType, date, time, distance, duration, fare, address } = req.body;
 
     // Check if the user has provided required fields like userId and address
-    if (!userId || !address) {
-      return res.status(400).json({ message: 'Missing required fields (userId or address)' });
+    if (!userId) {
+      return res.status(400).json({ message: 'Missing required field (userId)' });
     }
 
     let newOrder;
@@ -25,37 +24,31 @@ router.post('/add', authMiddleware, async (req, res) => {
         type: 'service', // For service bookings
       });
 
-    } else if (flatType) {
-      // If flatType is provided, it's a flat booking
-      if (!flatType || !moveInDate || !budget) {
-        return res.status(400).json({ message: 'Missing required fields for flat booking' });
-      }
+    } else if (flatId) {
 
       newOrder = new Order({
-        flatType,
-        moveInDate,
-        budget,
+        flatId,
         userId,
-        address,
         type: 'flat', // For flat bookings
       });
 
     } else if (carType) {
       // If carType is provided, it's a car booking
-      if (!pickupLocation || !dropoffLocation || !pickupDate || !pickupTime || !carType || distance === undefined || price === undefined) {
+      if (!pickup || !dropoff || !journeyType || !carType || !distance || !duration || !fare || !date || !time ) {
         return res.status(400).json({ message: 'Missing required fields for car booking' });
       }
 
       newOrder = new Order({
         pickup,
         dropoff,
-        pickupDate,
-        pickupTime,
+        journeyType,
         carType,
         distance,
-        price,
+        duration,
+        fare,
+        date,
+        time,
         userId,
-        address,
         type: 'car', // For car bookings
       });
     } else {
@@ -75,9 +68,9 @@ router.post('/add', authMiddleware, async (req, res) => {
 });
 
 // Get all orders (Admin functionality)
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', adminMiddleware, async (req, res) => {
   try {
-    const orders = await Order.find().populate('serviceId userId');
+    const orders = await Order.find().populate('serviceId userId flatId');
     res.status(200).json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);
@@ -90,7 +83,7 @@ router.get('/user/:userId', authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const userOrders = await Order.find({ userId }).populate('serviceId userId');
+    const userOrders = await Order.find({ userId }).populate('serviceId userId flatId').sort({ createdAt: -1 });
     res.status(200).json(userOrders);
   } catch (error) {
     console.error('Error fetching user orders:', error);
@@ -98,13 +91,13 @@ router.get('/user/:userId', authMiddleware, async (req, res) => {
   }
 });
 
-// Update order status (Admin or user can update their order)
-router.patch('/update/:orderId', authMiddleware, async (req, res) => {
+// Update order status (Admin can update their order)
+router.patch('/update/:orderId', adminMiddleware, async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
 
-    if (!['Pending', 'Confirmed', 'Completed', 'Cancelled'].includes(status)) {
+    if (!['Pending', 'Accepted', 'Completed', 'Cancelled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status value' });
     }
 
@@ -126,7 +119,7 @@ router.patch('/update/:orderId', authMiddleware, async (req, res) => {
 });
 
 // Delete an order
-router.delete('/delete/:orderId', authMiddleware, async (req, res) => {
+router.delete('/delete/:orderId', async (req, res) => {
   try {
     const { orderId } = req.params;
 

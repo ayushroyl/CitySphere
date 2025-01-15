@@ -37,9 +37,6 @@ const Nav = () => {
             <Link to="/myprofile" className="hover:text-gray-200 font-medium">
               My Profile
             </Link>
-            <Link to="/accesslogin" className="hover:text-gray-200 font-medium">
-              Admin Login
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
