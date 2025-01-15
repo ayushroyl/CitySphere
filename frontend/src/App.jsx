@@ -29,7 +29,7 @@ function App() {
 
 function MainRoutes() {
   const location = useLocation();
-  const hideNavAndFooter = location.pathname === "/authpage" || location.pathname.startsWith("/forget-password") || location.pathname.startsWith("/privacy-policy");
+  const hideNavAndFooter = location.pathname === "/authpage" || location.pathname.startsWith("/forget-password");
 
   return (
     <>
