@@ -296,4 +296,28 @@ const CarBooking = () => {
   );
 };
 
+// Spinner CSS as an object
+const spinnerStyle = {
+  border: "5px solid #f3f3f3", // Light gray border
+  borderTop: "5px solid #3498db", // Blue border
+  borderRadius: "50%",
+  width: "50px",
+  height: "50px",
+  animation: "spin 1s linear infinite",
+};
+
+// Add animation keyframes in style tag
+const styleTag = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+// Inject the style tag into the document
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styleTag;
+document.head.appendChild(styleSheet);
+
 export default CarBooking;
