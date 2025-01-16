@@ -167,6 +167,7 @@ const FinalCarBook = () => {
       console.error("Error during booking:", error);
       console.log("There was an error processing your booking. Please try again later.");
       setIsProcessing(false);
+      navigate('/authpage');
     }
   };
 

@@ -53,6 +53,7 @@ const FlatBooking = () => {
     } catch (error) {
       setIsProcessing(false);
       console.error("Error confirming booking:", error);
+      navigate('/authpage');
     }
   };
 
