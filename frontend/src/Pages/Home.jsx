@@ -135,8 +135,8 @@ const Home = () => {
             <span className="mt-2">Flat Booking</span>
           </Link>
           {[
-            { icon: faBolt, label: "Electrician", id: '6737cb6ffee3396111768af5' },
-            { icon: faWrench, label: "Plumber", id: '6737cb7dfee3396111768af7' }
+            { icon: faBolt, label: "Electrician", id: '67892c876c55625177544ca8' },
+            { icon: faWrench, label: "Plumber", id: '67892c876c55625177544ca9' }
           ].map((item, index) => (
             <div key={index} onClick={() => handleBookService(item.id)} className="cursor-pointer bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-4 rounded-lg shadow-md flex flex-col items-center hover:from-indigo-700 hover:to-blue-600 transition">
               <FontAwesomeIcon icon={item.icon} size="2x" />

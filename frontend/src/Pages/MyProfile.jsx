@@ -400,7 +400,7 @@ const MyProfile = () => {
         </ul>
 
         {/* Footer */}
-        <p className="text-center text-gray-400 mt-6 text-sm">Version 1.01 &copy; CitySphere</p>
+        <p className="text-center text-gray-400 mt-6 text-sm"><a href="/privacy-policy">Version 1.01 &copy; CitySphere</a></p>
       </div>
     </div>
   );
