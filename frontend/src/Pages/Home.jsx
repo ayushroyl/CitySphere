@@ -24,9 +24,9 @@ const Home = () => {
   const navigate = useNavigate();
 
   const services = [
-    { id: '6737cb87fee3396111768af9', name: 'AC Repair', description: 'Quick and reliable AC repair services for your home.', icon: faFire },
-    { id: '6737cb6ffee3396111768af5', name: 'Electrical Repairs', description: 'Professional electricians for all your needs.', icon: faBolt },
-    { id: '6737cb7dfee3396111768af7', name: 'Plumbing Services', description: 'Experienced plumbers to solve your plumbing issues.', icon: faWrench },
+    { id: '67892c876c55625177544caa', name: 'AC Repair', description: 'Quick and reliable AC repair services for your home.', icon: faFire },
+    { id: '67892c876c55625177544ca8', name: 'Electrical Repairs', description: 'Professional electricians for all your needs.', icon: faBolt },
+    { id: '67892c876c55625177544ca9', name: 'Plumbing Services', description: 'Experienced plumbers to solve your plumbing issues.', icon: faWrench },
   ];
 
   // Function to handle service booking
