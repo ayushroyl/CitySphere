@@ -104,7 +104,7 @@ const MyProfile = () => {
       return;
     }
 
-    setIsLoading(true); // Start loading spinner or disable button
+    setLoading(true); // Start loading spinner or disable button
 
     try {
       // Make the API request to change the password
@@ -124,7 +124,7 @@ const MyProfile = () => {
       setError("Error updating password. Please try again.");
       setMessage(""); // Clear any success messages
     } finally {
-      setIsLoading(false); // Stop loading spinner or re-enable button
+      setLoading(false); // Stop loading spinner or re-enable button
     }
   };
 

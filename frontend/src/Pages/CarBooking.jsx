@@ -61,9 +61,9 @@ const CarBooking = () => {
       setDistance(calculatedDistance);
       setDuration(travelTime);
 
-      const baseFare = 50;
-      const costPerKm = 10;
-      const costPerMinute = 2;
+      const baseFare = 100;
+      const costPerKm = 20;
+      const costPerMinute = 5;
 
       let totalFare =
         parseInt(baseFare + calculatedDistance * costPerKm + travelTimeInMin * costPerMinute);

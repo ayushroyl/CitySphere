@@ -29,7 +29,7 @@ const FlatBooking = () => {
   // Simulate booking process
   const handleBooking = async (flatId) => {
     const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userData").split('"')[1];
+    //const userId = localStorage.getItem("userData").split('"')[1];
     if (!token) {
       navigate("/authpage");
       return;

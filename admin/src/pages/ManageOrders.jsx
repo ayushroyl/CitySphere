@@ -114,10 +114,8 @@ const ManageOrders = () => {
     }
   
     const phoneNumber = order?.userId?.mobile || "0000000000"; // Fallback number
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
-      "_blank"
-    );
+    const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    window.location.href = url;
   };  
 
   return (
