@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import Lottie from "lottie-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import checkmarkAnimation from "../assets/checkmark.json";
-import BASE_URL from '../config/apiConfig'; 
+import BASE_URL from '../config/apiConfig';
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -11,6 +12,7 @@ const Services = () => {
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
+  const [loading, setLoading] = useState(true);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false); // Animation state
@@ -22,10 +24,13 @@ const Services = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`${BASE_URL}/api/services`);
         setServices(response.data);
       } catch (error) {
         console.error("Error fetching services:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchServices();
@@ -148,10 +153,22 @@ const Services = () => {
                 key={service._id}
                 className="bg-white rounded-lg shadow-xl transform transition-transform hover:scale-105 hover:shadow-2xl hover:translate-y-2 p-6 flex flex-col items-center text-center"
               >
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                <h2 className="text-2xl font-medium text-gray-900 mb-2">
                   {service.serviceName}
                 </h2>
-                <p className="text-gray-600 mb-4">{service.description}</p>
+
+                {/* Conditional rendering of image */}
+                {service.servicePicture ? (
+                  <div className="mb-4">
+                    <img
+                      src={`${BASE_URL}${service.servicePicture}`}  // Updated the correct value
+                      alt={service.serviceName}
+                      className="w-full h-38 object-cover rounded-lg"
+                    />
+                  </div>
+                ) : null} {/* Don't render image container if service.picture is null */}
+
+                <p className="text-gray-700 mb-4">{service.description}</p>
                 <div className="text-lg font-bold text-green-600 mb-4">
                   ₹{service.price}
                 </div>
@@ -165,7 +182,9 @@ const Services = () => {
             ))}
           </div>
         ) : (
-          <p className="text-center text-gray-500">No services found.</p>
+          <div className="flex justify-center items-center h-64">
+            <ClipLoader size={50} color="#3498db" />
+          </div>
         )}
       </div>
 

@@ -41,14 +41,24 @@ const Settings = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 5) {
-      setError("You can upload up to 5 pictures.");
-    } else {
-      setFlatPictures(files);
-      setError("");
+
+    if (modal.type.includes("service")) {
+      if (files.length > 1) {
+        setError("You can upload only one picture for a service.");
+      } else {
+        setFlatPictures(files); // Reusing flatPictures for service picture for simplicity
+        setError("");
+      }
+    } else if (modal.type.includes("flat")) {
+      if (files.length > 5) {
+        setError("You can upload up to 5 pictures for a flat.");
+      } else {
+        setFlatPictures(files);
+        setError("");
+      }
     }
   };
-
+  
   const handleModalClose = () => {
     setModal({ open: false, type: null, item: null });
     setFormData({});
@@ -58,7 +68,6 @@ const Settings = () => {
 
   const handleAddEditSubmit = async () => {
     try {
-      // Determine the endpoint and URL based on the modal type
       const endpoint =
         modal.type.includes("service")
           ? `${BASE_URL}/api/services`
@@ -70,53 +79,35 @@ const Settings = () => {
 
       const config = {
         headers: {
-          "Content-Type": modal.type.includes("service") ? "application/json" : "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       };
 
-      // Handle Service Submission
-      if (modal.type.includes("service")) {
-        const { serviceName, description, price } = formData;
-
-        // For Services: JSON data is sufficient
-        const serviceData = {
-          serviceName,
-          description,
-          price,
-        };
-
-        if (modal.type.startsWith("add")) {
-          await axios.post(url, serviceData, config);
-        } else {
-          await axios.put(url, serviceData, config);
-        }
-      }
-
-      // Handle Flat Submission (No changes required)
-      else if (modal.type.includes("flat")) {
-        const form = new FormData();
+      let form;
+      if (modal.type.includes("service") && flatPictures.length > 0) {
+        form = new FormData();
+        form.append("servicePicture", flatPictures[0]);
         Object.keys(formData).forEach((key) => form.append(key, formData[key]));
-
-        if (flatPictures.length > 0) {
-          flatPictures.forEach((file) => form.append("flatPictures", file));
-        }
-
-        if (modal.type.startsWith("add")) {
-          await axios.post(url, form, config);
-        } else {
-          await axios.put(url, form, config);
-        }
+        config.headers["Content-Type"] = "multipart/form-data";
+      } else if (modal.type.includes("flat")) {
+        form = new FormData();
+        Object.keys(formData).forEach((key) => form.append(key, formData[key]));
+        flatPictures.forEach((file) => form.append("flatPictures", file));
+        config.headers["Content-Type"] = "multipart/form-data";
+      } else {
+        form = formData;
       }
 
-      // Refresh data and close the modal
+      if (modal.type.startsWith("add")) {
+        await axios.post(url, form, config);
+      } else {
+        await axios.put(url, form, config);
+      }
+
       fetchData(modal.type.includes("service") ? "services" : "flat");
       handleModalClose();
     } catch (err) {
-      setError(
-        `Error saving ${modal.type.includes("service") ? "service" : "flat"}: ${err.message}`
-      );
-      navigate("/accesslogin")
+      setError(`Error saving data: ${err.message}`);
     }
   };
 
@@ -232,16 +223,28 @@ const Settings = () => {
               defaultValue={modal.item?.flatName || modal.item?.serviceName || ""}
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+            {modal.type.includes("service") && (
+              <div>
+                <p className="text-green-600">Upload One Photo (*.jpg, *.jpeg, *.png)</p>
+                <input
+                  type="file"
+                  accept=".jpg, .jpeg, .png"
+                  name="servicePicture"
+                  onChange={handleFileChange}
+                  className="w-full p-3 border rounded-lg focus:outline-none"
+                />
+              </div>
+            )}
             {!modal.type.includes("service") && (
               <>
-              <p className="text-green-600">Upload Max 5 Photos (*.jpg, *.jpeg, *.png) only this format</p>
-              <input
-                type="file"
-                multiple
-                name="flatPictures"
-                onChange={handleFileChange}
-                className="w-full p-3 border rounded-lg focus:outline-none"
-              />
+                <p className="text-green-600">Upload Max 5 Photos (*.jpg, *.jpeg, *.png) only this format</p>
+                <input
+                  type="file"
+                  multiple
+                  name="flatPictures"
+                  onChange={handleFileChange}
+                  className="w-full p-3 border rounded-lg focus:outline-none"
+                />
               </>
             )}
             <textarea

@@ -100,29 +100,93 @@ const PrivacyPolicy = () => {
                 </p>
             </section>
 
+            {/* Contact Us Section */}
             <section className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">7. Contact Us</h2>
                 <p className="text-gray-700">
                     If you have questions about this policy, contact us at:
                 </p>
                 <p className="text-gray-700">
-                    <strong>Email:</strong> citysphere911@gmail.com <br />
-                    <strong>Phone:</strong> +91-9117547911
+                    <strong>Email: </strong>
+                    <a
+                        href="mailto:citysphere911@gmail.com"
+                        className="text-blue-600 underline">
+                        citysphere911@gmail.com
+                    </a>
+                    <br />
+                    <strong>Phone: </strong>
+                    <a
+                        href="tel:+919117547911"
+                        className="text-blue-600 underline">
+                        +91-9117547911
+                    </a>
                 </p>
             </section>
+
 
             {/* Developer and Organization Branding Section */}
             <section className="mt-12 border-t-4 pt-6">
                 <h2 className="text-xl font-semibold mb-4">About the Developer & Organization</h2>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><strong>Developer: </strong><a href="https://instagram.com/ayushroyl" target="_blank" rel="noopener noreferrer" className="underline"> Ayush Roy</a></li>
-                    <li><strong>Organization: </strong><a href="https://roynix.tech" target="_blank" rel="noopener noreferrer" className="underline"> RoyNix</a></li>
-                    <li><strong>Email:</strong> <a href="mailto:ayushroy0753@gmail.com" className="text-blue-600 underline">ayushroy0753@gmail.com</a></li>
-                    <li><strong>Contact:</strong> <a href="tel:+917255071097" className="text-blue-600 underline">+91-7255071097</a></li>
-                    <li><strong>Portfolio:</strong> <a href="https://ayushroyl.github.io/profile" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">ayushroyl.github.io/profile</a></li>
-                    <li><strong>Organization Website:</strong> <a href="https://roynix.tech" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">roynix.tech</a></li>
+                    <li>
+                        <strong>Developer: </strong>
+                        <a
+                            href="https://instagram.com/ayushroyl"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline">
+                            Ayush Roy
+                        </a>
+                    </li>
+                    <li>
+                        <strong>Organization: </strong>
+                        <a
+                            href="https://roynix.tech"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline">
+                            RoyNix
+                        </a>
+                    </li>
+                    <li>
+                        <strong>Email: </strong>
+                        <a
+                            href="mailto:ayushroy0753@gmail.com"
+                            className="text-blue-600 underline">
+                            ayushroy0753@gmail.com
+                        </a>
+                    </li>
+                    <li>
+                        <strong>Contact: </strong>
+                        <a
+                            href="tel:+917255071097"
+                            className="text-blue-600 underline">
+                            +91-7255071097
+                        </a>
+                    </li>
+                    <li>
+                        <strong>Portfolio: </strong>
+                        <a
+                            href="https://ayushroyl.github.io/profile"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline">
+                            ayushroyl.github.io/profile
+                        </a>
+                    </li>
+                    <li>
+                        <strong>Organization Website: </strong>
+                        <a
+                            href="https://roynix.tech"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline">
+                            roynix.tech
+                        </a>
+                    </li>
                 </ul>
             </section>
+
         </div>
     );
 };

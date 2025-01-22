@@ -34,6 +34,13 @@ const uploadProfile = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
 }).single('profilePicture'); // For single file upload with field name "profilePicture"
 
+// Middleware for service picture upload (single file)
+const uploadServiceProfile = multer({
+  storage: configureStorage('services'),
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+}).single('servicePicture'); // For single file upload with field name "servicePicture"
+
 // Middleware for flat pictures upload (multiple files)
 const uploadFlatPhotos = multer({
   storage: configureStorage('flats'),
@@ -44,4 +51,5 @@ const uploadFlatPhotos = multer({
 module.exports = {
   uploadProfile,
   uploadFlatPhotos,
+  uploadServiceProfile,
 };

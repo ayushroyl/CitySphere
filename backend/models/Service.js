@@ -14,7 +14,7 @@ const serviceSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    icon: {
+    servicePicture: {
         type: String,
     },
     createdAt: {

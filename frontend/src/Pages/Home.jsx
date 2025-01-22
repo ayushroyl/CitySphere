@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar, faHome, faBolt, faWrench, faFire } from '@fortawesome/free-solid-svg-icons';
+import { faCar, faHome, faBolt, faWrench, faFire, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import image1 from '../assets/img1.jpg';
@@ -94,10 +95,10 @@ const Home = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-
+    <div className="max-w-7xl mx-auto relative">
+  
       {/* Carousel Section */}
-      <div className="mb-8">
+      <div className="mb-8 relative">
         <Carousel
           showThumbs={false}
           showStatus={false}
@@ -112,6 +113,8 @@ const Home = () => {
             .map((item, index) => (
               <div key={index} className="relative">
                 <img src={item.image} alt={item.title} className="object-cover h-[300px] w-full md:h-[400px]" />
+  
+                {/* Overlay Gradient Text */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4 text-white">
                   <div>
                     <h2 className="text-xl md:text-2xl font-semibold">{item.title}</h2>
@@ -121,7 +124,33 @@ const Home = () => {
               </div>
             ))}
         </Carousel>
-      </div>
+  
+        {/* Fixed Buttons on the Right Side */}
+        <div className="absolute right-4 top-2/3 flex flex-col space-y-4 z-10">
+  
+          {/* Call Button */}
+          <a
+            href="tel:+919117547911"
+            className="bg-blue-600 text-white p-4 rounded-full shadow-lg flex items-center justify-center w-14 h-14 transition duration-300"
+            aria-label="Call Us"
+          >
+            <FontAwesomeIcon icon={faPhone} size="xl" />
+          </a>
+        </div>
+  
+        {/* Fixed Buttons on the Left Side */}
+        <div className="absolute left-4 top-2/3 flex flex-col space-y-4 z-10">
+  
+          {/* WhatsApp Button */}
+          <a
+            href="whatsapp://send?phone=+919117547911&text=hii_from_CitySphere"
+            className="bg-green-500 text-white p-4 rounded-full shadow-lg flex items-center justify-center w-14 h-14 hover:bg-green-600 transition duration-300"
+            aria-label="Message on WhatsApp"
+          >
+            <FontAwesomeIcon icon={faWhatsapp} size="xl" />
+          </a>
+        </div>
+      </div>    
 
       {/* Quick Services Section */}
       <div className="mb-8 px-4">

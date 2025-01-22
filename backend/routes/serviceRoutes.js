@@ -1,6 +1,7 @@
 const express = require('express');
 const Service = require('../models/Service'); // Assuming you have a Service model set up
-const { adminMiddleware } = require('../middleware/authMiddleware');  // Import middlewares
+const { adminMiddleware } = require('../middleware/authMiddleware'); // Import admin middleware
+const { uploadServiceProfile } = require('../middleware/upload'); // Import upload middleware for service pictures
 const router = express.Router();
 
 // GET - Fetch all services
@@ -13,13 +14,15 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST - Add a new service
-router.post('/add', adminMiddleware, async (req, res) => {
+// POST - Add a new service with picture upload
+router.post('/add', adminMiddleware, uploadServiceProfile, async (req, res) => {
   const { serviceName, description, price } = req.body;
+  const servicePicture = req.file ? `/uploads/services/${req.file.filename}` : null;
 
   try {
     const newService = new Service({
       serviceName,
+      servicePicture,
       description,
       price,
     });
@@ -31,17 +34,19 @@ router.post('/add', adminMiddleware, async (req, res) => {
   }
 });
 
-// PUT - Update an existing service
-router.put('/update/:id', adminMiddleware, async (req, res) => {
+// PUT - Update an existing service with optional picture upload
+router.put('/update/:id', adminMiddleware, uploadServiceProfile, async (req, res) => {
   const serviceId = req.params.id;
   const { serviceName, description, price } = req.body;
+  const servicePicture = req.file ? `/uploads/services/${req.file.filename}` : null;
 
   try {
-    const updatedService = await Service.findByIdAndUpdate(
-      serviceId,
-      { serviceName, description, price},
-      { new: true }
-    );
+    const updateData = { serviceName, description, price };
+    if (servicePicture) {
+      updateData.servicePicture = servicePicture;
+    }
+
+    const updatedService = await Service.findByIdAndUpdate(serviceId, updateData, { new: true });
 
     if (!updatedService) {
       return res.status(404).json({ message: 'Service not found' });

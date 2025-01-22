@@ -13,7 +13,7 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-indigo-600 to-blue-400 text-white py-2 md:py-8">
       {/* Mobile Footer Tab Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-indigo-600 to-blue-400 shadow-lg border-t flex justify-between px-3 py-1 md:hidden z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-indigo-600 to-blue-400 shadow-lg border-t flex justify-between px-7 py-2 md:hidden z-50">
         <Link
           to="/"
           className={`flex flex-col items-center transition-all duration-300 ease-in-out ${
