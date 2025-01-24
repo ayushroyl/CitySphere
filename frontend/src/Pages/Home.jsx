@@ -185,7 +185,7 @@ const Home = () => {
       {/* Trending Services Section */}
       <div className="mb-8 px-4">
         <h2 className="text-3xl font-bold mb-6 text-indigo-900">Trending Services</h2>
-        <div className="grid grid-cols-1 mb-14 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 mb-12 md:grid-cols-3 gap-6">
           {services.map((service) => (
             <div
               key={service.id}
