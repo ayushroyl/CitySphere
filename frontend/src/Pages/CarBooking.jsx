@@ -174,7 +174,7 @@ const CarBooking = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center">
-      <div className="bg-white p-8 mt-14 font-medium rounded-xl shadow-lg w-full sm:w-2/3 lg:w-1/2 max-w-lg">
+      <div className="bg-white p-8 mt-14 mb-10 font-medium rounded-xl shadow-lg w-full sm:w-2/3 lg:w-1/2 max-w-lg">
         {/* Pickup Location */}
         <div className="mb-4">
           <label className="block text-gray-600 mb-2">Set Pickup Location</label>

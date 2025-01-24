@@ -105,30 +105,49 @@ const Footer = () => {
       </div>
 
       {/* Desktop Footer */}
-      <div className="hidden md:flex font-medium flex-col items-center space-y-4">
-        <div className="flex space-x-8">
-          <Link to="/" className="hover:text-gray-200">Home</Link>
-          <Link to="/services" className="hover:text-gray-200">Services</Link>
-          <Link to="/myorder" className="hover:text-gray-200">My Orders</Link>
-          <Link to="/myprofile" className="hover:text-gray-200">Profile</Link>
+      <div className="container mx-auto px-6 md:px-10">
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-8 py-8">
+          
+          {/* First Column: Navigation Links */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-bold text-lg text-white">Quick Links</h3>
+            <div className="flex flex-col space-y-2 text-sm">
+              <Link to="/" className="hover:text-white transition">Home</Link>
+              <Link to="/services" className="hover:text-white transition">Services</Link>
+              <Link to="/myorder" className="hover:text-white transition">My Orders</Link>
+              <Link to="/myprofile" className="hover:text-white transition">Profile</Link>
+            </div>
+          </div>
+
+          {/* Second Column: About Us */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-bold text-lg text-white">About CitySphere</h3>
+            <p className="text-sm">CitySphere is your one-stop platform for on-demand services, bookings, and more. We provide everything you need for everyday solutions!</p>
+          </div>
+
+          {/* Third Column: Social & Policy */}
+          <div className="flex flex-col md:ml-32 space-y-4">
+            <h3 className="font-bold text-lg text-white">Follow Us</h3>
+            <div className="flex space-x-4">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Facebook">
+                <FontAwesomeIcon icon={faFacebook} size="lg" />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Twitter">
+                <FontAwesomeIcon icon={faTwitter} size="lg" />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram">
+                <FontAwesomeIcon icon={faInstagram} size="lg" />
+              </a>
+            </div>
+            <Link to="/privacy-policy" className="text-sm text-white hover:underline transition">Privacy Policy</Link>
+          </div>
+
         </div>
 
-        <div className="flex flex-col items-center space-y-2">
-          <p>CitySphere © All rights reserved</p>
-          <div className="flex space-x-4">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200">
-              <FontAwesomeIcon icon={faFacebook} />
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200">
-              <FontAwesomeIcon icon={faTwitter} />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200">
-              <FontAwesomeIcon icon={faInstagram} />
-            </a>
-            <a href="/privacy-policy" className="hover:text-gray-200 hover:underline">
-              Privacy Policy
-            </a>
-          </div>
+        {/* Footer Bottom Text */}
+        <div className="text-center text-sm text-white mt-4">
+          <p className='mb-4'><strong>CitySphere © </strong>{new Date().getFullYear()} | All rights reserved</p>
+          <p>Developed by <a href='https://roynix.tech' target="_blank" rel="noopener noreferrer" className='underline'><strong>RoyNix</strong></a></p>
         </div>
       </div>
     </footer>

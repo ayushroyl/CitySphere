@@ -79,14 +79,14 @@ const Home = () => {
       );
 
       if (response.status === 201) {
-          setIsProcessing(false);
-          setIsSuccess(true); // Show success animation
-          setTimeout(() => {
-            setIsSuccess(false); // Hide success animation after 3 seconds
-            setShowAddressModal(false);
-            setSelectedServiceId(null);
-            navigate("/myorder");
-          }, 1500);
+        setIsProcessing(false);
+        setIsSuccess(true); // Show success animation
+        setTimeout(() => {
+          setIsSuccess(false); // Hide success animation after 3 seconds
+          setShowAddressModal(false);
+          setSelectedServiceId(null);
+          navigate("/myorder");
+        }, 1500);
       }
     } catch (error) {
       setIsProcessing(false);
@@ -96,7 +96,7 @@ const Home = () => {
 
   return (
     <div className="max-w-7xl mx-auto relative">
-  
+
       {/* Carousel Section */}
       <div className="mb-8 relative">
         <Carousel
@@ -113,7 +113,7 @@ const Home = () => {
             .map((item, index) => (
               <div key={index} className="relative">
                 <img src={item.image} alt={item.title} className="object-cover h-[300px] w-full md:h-[400px]" />
-  
+
                 {/* Overlay Gradient Text */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4 text-white">
                   <div>
@@ -124,33 +124,33 @@ const Home = () => {
               </div>
             ))}
         </Carousel>
-  
+
         {/* Fixed Buttons on the Right Side */}
-        <div className="absolute right-4 top-2/3 flex flex-col space-y-4 z-10">
-  
+        <div className="absolute right-4 top-28 flex flex-col items-center space-y-4 z-10">
+          {/* Call Now Attention Text */}
+          <div
+            className="bg-yellow-300 text-black font-semibold py-2 px-4 rounded-full shadow-lg mb-2 animate-bounce"
+            style={{
+              animation: "pulse 2s infinite",
+            }}
+          >
+            Call Now!
+          </div>
+
           {/* Call Button */}
           <a
             href="tel:+919117547911"
-            className="bg-blue-600 text-white p-4 rounded-full shadow-lg flex items-center justify-center w-14 h-14 transition duration-300"
+            className="bg-blue-600 text-white p-4 rounded-full shadow-lg flex items-center justify-center w-14 h-14 transition duration-300 animate-ping-once"
+            style={{
+              animation: "pulse 1.5s ease-in-out infinite",
+            }}
             aria-label="Call Us"
           >
             <FontAwesomeIcon icon={faPhone} size="xl" />
           </a>
         </div>
-  
-        {/* Fixed Buttons on the Left Side */}
-        <div className="absolute left-4 top-2/3 flex flex-col space-y-4 z-10">
-  
-          {/* WhatsApp Button */}
-          <a
-            href="whatsapp://send?phone=+919117547911&text=hii_from_CitySphere"
-            className="bg-green-500 text-white p-4 rounded-full shadow-lg flex items-center justify-center w-14 h-14 hover:bg-green-600 transition duration-300"
-            aria-label="Message on WhatsApp"
-          >
-            <FontAwesomeIcon icon={faWhatsapp} size="xl" />
-          </a>
-        </div>
-      </div>    
+
+      </div>
 
       {/* Quick Services Section */}
       <div className="mb-8 px-4">
@@ -185,7 +185,7 @@ const Home = () => {
       {/* Trending Services Section */}
       <div className="mb-8 px-4">
         <h2 className="text-3xl font-bold mb-6 text-indigo-900">Trending Services</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 mb-14 md:grid-cols-3 gap-6">
           {services.map((service) => (
             <div
               key={service.id}
