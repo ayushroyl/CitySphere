@@ -94,11 +94,7 @@ const FlatBooking = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-6 px-4 md:px-8">
-      <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">
-        Book Your Dream Flat
-      </h1>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 my-12">
         {flats.map((flat, index) => (
           <motion.div
             key={flat._id}

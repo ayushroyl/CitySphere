@@ -20,6 +20,7 @@ const CarBooking = () => {
   const [duration, setDuration] = useState(null);
   const [fare, setFare] = useState(null);
   const [direction, setDirection] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleContinue = async () => {
     if (
@@ -35,6 +36,7 @@ const CarBooking = () => {
       console.log("Please fill all the fields and confirm locations.");
       return;
     }
+    setLoading(true);
     await fetchRouteInfo();
   };
 
@@ -81,6 +83,7 @@ const CarBooking = () => {
       navigateToFinalCarBook(totalFare, calculatedDistance, travelTime);
     } catch (error) {
       console.error("Error fetching route info:", error);
+      setLoading(false);
     }
   };
 
@@ -258,7 +261,7 @@ const CarBooking = () => {
           >
             <option value="">-- Select --</option>
             <option value="Economy">5-Seater</option>
-            <option value="Luxury">9-Seater</option>
+            <option value="Luxury">7-Seater</option>
           </select>
         </div>
 
@@ -287,9 +290,10 @@ const CarBooking = () => {
         {/* Continue Button */}
         <button
           onClick={handleContinue}
-          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-500 transition duration-200"
+          className="w-full bg-blue-500 text-white py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          disabled={loading}
         >
-          Continue
+          {loading ? "Processing..." : "Continue"}
         </button>
       </div>
     </div>

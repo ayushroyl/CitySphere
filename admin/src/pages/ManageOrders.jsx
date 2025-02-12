@@ -114,7 +114,7 @@ const ManageOrders = () => {
     }
   
     const phoneNumber = order?.userId?.mobile || "0000000000"; // Fallback number
-    const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    const url = `whatsapp://send?phone=91${phoneNumber}&text=${encodeURIComponent(message)}`;
     window.location.href = url;
   };  
 

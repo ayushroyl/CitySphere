@@ -106,7 +106,7 @@ const MyOrder = () => {
           <p className="mt-4 text-gray-600 text-lg">You have no orders yet!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           {orders.map((order) => (
             <div
               key={order._id}

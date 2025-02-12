@@ -108,7 +108,7 @@ const ManageUsers = () => {
         />
       </div>
 
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+      <div className="overflow-x-auto bg-white shadow-md mb-10 rounded-lg">
         <table className="min-w-full">
           <thead className="bg-blue-500 text-white">
             <tr>

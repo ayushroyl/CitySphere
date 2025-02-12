@@ -172,7 +172,7 @@ const FinalCarBook = () => {
   };
 
   return (
-    <div className="min-h-screen mt-16 bg-gray-100 flex flex-col items-center justify-center">
+    <div className="min-h-screen my-12 bg-gray-100 flex flex-col items-center justify-center">
       <div className="bg-white rounded-lg shadow-md w-full sm:w-2/3 lg:w-1/2 max-w-lg p-6">
         {/* Map Container */}
         <div id="map" className="h-64 bg-gray-200 rounded-md shadow-sm mb-6"></div>
