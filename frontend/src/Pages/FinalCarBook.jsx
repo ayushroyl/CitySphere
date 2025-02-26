@@ -212,12 +212,18 @@ const FinalCarBook = () => {
           <p><strong>Distance:</strong> {distance} KM</p>
           <p><strong>Duration:</strong> {duration}</p>
           <p><strong>Total Fare:</strong> ₹{fare}/-</p>
+          <p><strong>Date:</strong> {new Date(date).toLocaleString("en-IN", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}</p>
+          <p><strong>Time:</strong> {time}</p>
         </div>
 
         {/* Confirm Booking Button */}
         <button
           onClick={() => setShowConfirmModal(true)}
-          className="w-full mb-5 font-medium bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+          className="w-full font-medium bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
         >
           Proceed to Confirm
         </button>

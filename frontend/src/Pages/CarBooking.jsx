@@ -102,7 +102,8 @@ const CarBooking = () => {
       if (carType === "Luxury") {
         totalFare *= luxuryMultiplier;
       }
-
+      
+      totalFare = Math.ceil(totalFare);
       setFare(totalFare);
 
       navigateToFinalCarBook(totalFare, calculatedDistance, travelTime);
