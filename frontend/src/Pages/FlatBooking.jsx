@@ -29,7 +29,7 @@ const FlatBooking = () => {
         });
         setSlideIndices(initialIndices);
       } catch (error) {
-        alert("Failed to load flats. Please try again.");
+        console.error("Failed to load flats. Please try again.");
       } finally {
         setLoading(false);
       }
