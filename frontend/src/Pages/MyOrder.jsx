@@ -202,9 +202,9 @@ const MyOrder = () => {
           <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Cancel Order</h3>
             <p className="text-black font-medium mb-6">
-              Are you sure you want to cancel the{" "}
+              Are you sure you want to cancel this{" "}
               {selectedOrder.type === "flat"
-                ? `flat booking for ${selectedOrder.flatType}`
+                ? `flat booking`
                 : selectedOrder.type == "service"
                   ? `service ${selectedOrder.serviceId?.serviceName || "Unavailable"}`
                   :`this trip`} ?

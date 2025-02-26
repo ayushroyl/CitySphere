@@ -44,6 +44,9 @@ const Nav = () => {
             <Link to="/settings" className="hover:text-gray-200 font-medium">
               Settings
             </Link>
+            <Link to="/carsettings" className="hover:text-gray-200 font-medium">
+              Car Settings
+            </Link>
 
             {/* Show LogOut button if token exists, else show Login button */}
             {isAuthenticated ? (
@@ -100,6 +103,13 @@ const Nav = () => {
               onClick={() => setIsOpen(false)} // Close menu on click
             >
               Settings
+            </Link>
+            <Link
+              to="/carsettings"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-800"
+              onClick={() => setIsOpen(false)} // Close menu on click
+            >
+              Car Settings
             </Link>
 
             {/* Mobile LogOut/Login */}

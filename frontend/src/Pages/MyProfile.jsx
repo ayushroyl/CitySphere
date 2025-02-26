@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FaEdit, FaSave, FaUserEdit, FaClipboardList, FaSpinner, FaPlus, FaLock, FaSignOutAlt } from "react-icons/fa";
 import BASE_URL from '../config/apiConfig';
+import logo from '../assets/logo-long.png';
 
 const MyProfile = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
@@ -20,29 +22,31 @@ const MyProfile = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          navigate("/authpage");
-          return;
-        }
+      const token = localStorage.getItem("token");
 
+      if (!token) {
+        setError("You are not logged in. Please login or sign up.");
+        setLoading(false);
+        return;
+      }
+
+      try {
         const response = await axios.get(`${BASE_URL}/api/users/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         setUserData(response.data);
         setProfileImage(response.data.profilePic || null);
-        // Simulate a delay for the loader (e.g., 1 second)
-        setTimeout(() => setLoading(false), 1000);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch user data.");
-        navigate("/authpage");
+        setError("Invalid or expired session. Please login again.");
+        localStorage.removeItem("token"); // Clear invalid token
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [navigate]);
+  }, []);
 
   // Handle Profile Picture Upload
   const handleFileChange = async (e) => {
@@ -147,6 +151,28 @@ const MyProfile = () => {
         <FaSpinner className="animate-spin text-blue-600 text-4xl" />
       </div>
     );
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-red-50 to-gray-100 p-6">
+        <div className="bg-white shadow-lg rounded-lg p-6 max-w-sm text-center">
+          <div className="flex justify-center mb-4">
+            <img className="h-24" src={logo} alt="CitySphere" />
+          </div>
+          <div className="text-red-500 text-4xl mb-4">⚠️</div>
+          <h2 className="text-lg font-semibold text-gray-800">{error}</h2>
+          <p className="text-gray-600 mt-2">Please login or sign up to continue.</p>
+          <button
+            onClick={() => navigate("/authpage", { state: { from: location.pathname } })}
+            className="mt-5 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300"
+          >
+            Login / Signup
+          </button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen mt-8 font-medium bg-gradient-to-b from-white-300 via-white to-gray-100 flex justify-center items-center">

@@ -14,7 +14,7 @@ const Nav = () => {
 
   return (
     <nav className="bg-gradient-to-r from-indigo-600 to-blue-400 text-white shadow-md fixed top-0 left-0 right-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <div className="flex-shrink-0">
@@ -89,6 +89,13 @@ const Nav = () => {
               onClick={() => setIsOpen(false)} // Close menu on click
             >
               Privacy Policy
+            </Link>
+            <Link
+              to="/terms-and-conditions"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-800"
+              onClick={() => setIsOpen(false)} // Close menu on click
+            >
+              Terms & Conditions
             </Link>
           </div>
         </div>

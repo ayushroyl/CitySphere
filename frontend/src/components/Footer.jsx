@@ -126,11 +126,12 @@ const Footer = () => {
         <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Twitter">
           <FontAwesomeIcon icon={faTwitter} size="lg" />
         </a>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram">
+        <a href="https://instagram.com/citysphere911" target="_blank" rel="noopener noreferrer" className="hover:text-white transition" aria-label="Instagram">
           <FontAwesomeIcon icon={faInstagram} size="lg" />
         </a>
       </div>
       <Link to="/privacy-policy" className="text-sm text-white hover:underline transition">Privacy Policy</Link>
+      <Link to="/terms-and-conditions" className="text-sm text-white hover:underline transition">Terms & Conditions</Link>
     </div>
   </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSpring, animated } from 'react-spring';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,6 +17,7 @@ const AuthPage = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const formStyle = useSpring({
     opacity: 1,
@@ -100,7 +101,7 @@ const AuthPage = () => {
         const data = await response.json();
         localStorage.setItem('userData', JSON.stringify(data.userId));
         localStorage.setItem('token', data.token);
-        navigate('/myprofile');
+        navigate(location.state?.from || "/myprofile", { replace: true });
       } else {
         const errorData = await response.json();
         if (errorData.message === 'User Already exist') {
@@ -128,7 +129,7 @@ const AuthPage = () => {
         const data = await response.json();
         localStorage.setItem('userData', JSON.stringify(data.userId));
         localStorage.setItem('token', data.token);
-        navigate('/myprofile');
+        navigate(location.state?.from || "/myprofile", { replace: true });
       } else {
         const errorData = await response.json();
         if (errorData.message === 'Invalid credentials or mobile not verified') {

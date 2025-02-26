@@ -29,6 +29,14 @@ const FinalCarBook = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  useEffect(() => {
+    if (!location.state || !pickup || !dropoff || !journeyType || !carType || !distance || !duration || !fare || !date || !time) {
+      navigate("/car-booking"); // Redirect to specific booking page
+    }
+  }, [location, navigate]);
+  
 
   // Fetch route coordinates
   useEffect(() => {
@@ -117,14 +125,17 @@ const FinalCarBook = () => {
   //Confirm Booking
   const confirmBooking = async () => {
     const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userData").split('"')[1];
-    if (!token) {
-      navigate("/authpage");
+    const userData = localStorage.getItem("userData");
+    const userId = userData ? userData.split('"')[1] : null;
+
+    if (!token || !userId) {
+      setErrorMessage("Authentication required! Please login or signup.");
+      setShowConfirmModal(false);
       return;
     }
 
     if (!pickup || !dropoff || !journeyType || !carType || !distance || !duration || !fare || !date || !time) {
-      console.log("Missing required fields to confirm booking.");
+      setErrorMessage("Missing required details for booking.");
       return;
     }
 
@@ -165,17 +176,31 @@ const FinalCarBook = () => {
       }
     } catch (error) {
       console.error("Error during booking:", error);
-      console.log("There was an error processing your booking. Please try again later.");
+      setErrorMessage("Session expired! Please login again.");
       setIsProcessing(false);
-      navigate('/authpage');
+      setShowConfirmModal(false);
     }
   };
 
   return (
     <div className="min-h-screen my-12 bg-gray-100 flex flex-col items-center justify-center">
       <div className="bg-white rounded-lg shadow-md w-full sm:w-2/3 lg:w-1/2 max-w-lg p-6">
+
         {/* Map Container */}
         <div id="map" className="h-64 bg-gray-200 rounded-md shadow-sm mb-6"></div>
+
+        {/* Show Error Message If Authentication Fails */}
+        {errorMessage && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6">
+            <p className="font-semibold">{errorMessage}</p>
+            <button
+              onClick={() => navigate("/authpage", { state: { from: location.pathname } })}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Login / Signup
+            </button>
+          </div>
+        )}
 
         {/* Trip Details */}
         <div className="bg-gray-50 p-4 rounded-md shadow-sm mb-6">

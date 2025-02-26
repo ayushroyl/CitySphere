@@ -12,6 +12,7 @@ const Settings = () => {
   const [flatPictures, setFlatPictures] = useState([]);
   const [error, setError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState({ open: false, type: null, id: null });
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Settings = () => {
   const fetchData = async (type) => {
     try {
       const response = await axios.get(`${BASE_URL}/api/${type}`);
-      type === "services" ? setServices(response.data) : setFlats(response.data);
+      type === "services" ? setServices(response.data.reverse()) : setFlats(response.data.reverse());
     } catch (err) {
       setError(`Error fetching ${type}: ${err.message}`);
     }
@@ -44,6 +45,7 @@ const Settings = () => {
 
     if (modal.type.includes("service")) {
       if (files.length > 1) {
+        handleModalClose();
         setError("You can upload only one picture for a service.");
       } else {
         setFlatPictures(files); // Reusing flatPictures for service picture for simplicity
@@ -51,6 +53,7 @@ const Settings = () => {
       }
     } else if (modal.type.includes("flat")) {
       if (files.length > 5) {
+        handleModalClose();
         setError("You can upload up to 5 pictures for a flat.");
       } else {
         setFlatPictures(files);
@@ -58,7 +61,7 @@ const Settings = () => {
       }
     }
   };
-  
+
   const handleModalClose = () => {
     setModal({ open: false, type: null, item: null });
     setFormData({});
@@ -68,6 +71,8 @@ const Settings = () => {
 
   const handleAddEditSubmit = async () => {
     try {
+      setLoading(true);
+
       const endpoint =
         modal.type.includes("service")
           ? `${BASE_URL}/api/services`
@@ -107,7 +112,10 @@ const Settings = () => {
       fetchData(modal.type.includes("service") ? "services" : "flat");
       handleModalClose();
     } catch (err) {
+      handleModalClose();
       setError(`Error saving data: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -215,6 +223,14 @@ const Settings = () => {
             <h2 className="text-xl font-semibold">
               {modal.type.startsWith("add") ? "Add" : "Edit"} {modal.type.includes("service") ? "Service" : "Flat"}
             </h2>
+
+            {loading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+                <p className="ml-3 text-lg font-medium text-blue-500">Uploading...</p>
+              </div>
+            )}
+
             <input
               type="text"
               name={modal.type.includes("service") ? "serviceName" : "flatName"}
@@ -240,6 +256,7 @@ const Settings = () => {
                 <p className="text-green-600">Upload Max 5 Photos (*.jpg, *.jpeg, *.png) only this format</p>
                 <input
                   type="file"
+                  accept=".jpg, .jpeg, .png"
                   multiple
                   name="flatPictures"
                   onChange={handleFileChange}
@@ -266,14 +283,16 @@ const Settings = () => {
               <button
                 className="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl shadow-md transform transition duration-200 hover:scale-105"
                 onClick={handleModalClose}
+                disabled={loading} 
               >
                 Cancel
               </button>
               <button
                 className="bg-blue-600 text-white px-6 py-3 rounded-xl shadow-lg"
                 onClick={handleAddEditSubmit}
+                disabled={loading}
               >
-                Save
+                {loading ? "Uploading..." : "Save"}
               </button>
             </div>
           </div>

@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Users from "./pages/ManageUsers";
 import Orders from "./pages/ManageOrders";
 import Settings from "./pages/Settings";
+import CarSettings from "./pages/CarSettings";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -35,6 +36,7 @@ const MainLayout = () => {
             <Route path="/users" element={<Users />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/carsettings" element={<CarSettings />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

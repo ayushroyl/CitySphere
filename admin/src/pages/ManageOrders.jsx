@@ -233,6 +233,16 @@ const ManageOrders = () => {
                   <p>
                     <span className="font-medium">Rent:</span> {order?.flatId?.price || "Rent Unavailable"} per month
                   </p>
+                  <p>
+                      <span>Time:</span> {new Date(order?.createdAt).toLocaleString("en-IN", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                        hour12: true,
+                      }) || "Time Unavailable"}
+                    </p>
                 </>
               )}
 

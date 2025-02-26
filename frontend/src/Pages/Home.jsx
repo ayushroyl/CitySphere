@@ -95,7 +95,7 @@ const Home = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto relative">
+    <div className="max-w-8xl mx-auto relative">
 
       {/* Carousel Section */}
       <div className="mb-8 relative">
@@ -134,7 +134,9 @@ const Home = () => {
               animation: "pulse 2s infinite",
             }}
           >
-            Call Now!
+            <a
+              href="tel:+919117547911">Call Now!
+            </a>
           </div>
 
           {/* Call Button */}

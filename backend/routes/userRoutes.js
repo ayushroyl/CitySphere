@@ -53,7 +53,7 @@ router.post('/register', async (req, res) => {
         await newUser.save();
 
         // Generate JWT token
-        const token = jwt.sign({ id: newUser._id }, JWT_SECRET, { expiresIn: '10d' });
+        const token = jwt.sign({ id: newUser._id }, JWT_SECRET, { expiresIn: '365d' });
 
         // Respond with success message
         res.status(201).json({ message: 'User registered successfully', token, userId: newUser._id });
@@ -77,7 +77,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '10 days' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '365 days' });
         res.status(200).json({ token, userId: user._id });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });

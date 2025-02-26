@@ -14,6 +14,7 @@ import FlatBooking from './Pages/FlatBooking';
 import ForgetPass from "./Pages/Forgotpass";
 import NotFound from "./Pages/NotFound";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import TC from "./Pages/TC";
 
 
 function App() {
@@ -47,6 +48,7 @@ function MainRoutes() {
           <Route path="/finalcarbook" element={<FinalCarBook />} />
           <Route path="/flat-booking" element={<FlatBooking />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TC />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
